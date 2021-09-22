@@ -1,20 +1,14 @@
 # Transactions
-
 A transaction executes multiple queries and commits them only if all succeed. If one fails, none of the queries are committed. The return value is a `boolean`, which is the result of the transaction.
 
-## Usage
-
-### Specific Format
-
+## Specific Format
 When using the `Specific` format you must pass one parameter to the oxmysql export. In this case, the `queries` parameter contains your queries and the SQL variables unique to each query.
 
 This is useful for transactions where the queries do not share many SQL variables.
 
-#### Examples:
-
-##### Lua
-
-```Lua
+### Usage
+Lua
+```lua
 local queries = {
     { query = 'INSERT INTO `test` (id) VALUES (:someid)', values = { ['someid'] = 1 } },
     { query = 'INSERT INTO `test` (id) VALUES (:someid)', values = { ['someid'] = 2 } }
@@ -30,9 +24,8 @@ local result = exports.oxmysql:transactionSync(queries)
 print(result)
 ```
 
-##### JavaScript
-
-```Js
+Javascript
+```js
 const queries = [
     { query = 'INSERT INTO `test` (id) VALUES (:someid)', values = { someid = 1 } },
     { query = 'INSERT INTO `test` (id) VALUES (:someid)', values = { someid = 2 } }
@@ -49,16 +42,11 @@ console.log(result)
 ```
 
 ### Shared Format
-
-When using the `Shared` format you must pass two parameters to the oxmysql export. The `queries` and the `parameters` those queries will use.
-
+When using the `Shared` format you must pass two parameters to the oxmysql export. The `queries` and the `parameters` those queries will use.  
 This is useful if your queries use the same SQL variables.
 
-#### Examples:
-
-##### Lua
-
-```Lua
+Lua
+```lua
 local queries = {
     'INSERT INTO `test` (id, name) VALUES (:someid, :somename)',
     'SET `name` = :newname IN `test` WHERE `id` = :someid'
@@ -76,9 +64,8 @@ local result = exports.oxmysql:transactionSync(queries, parameters)
 print(result)
 ```
 
-##### JavaScript
-
-```Js
+Javascript
+```js
 const queries = [
     'INSERT INTO `test` (id, name) VALUES (:someid, :somename)',
     'SET `name` = :newname IN `test` WHERE `id` = :someid'
@@ -96,9 +83,7 @@ const result = await exports.oxmysql.transactionSync(queries, parameters)
 console.log(result)
 ```
 
-## Advanced
-
-### Transaction Isolation Level
+## Transaction Isolation Level
 
 This can be set through the convar `mysql_transaction_isolation_level` which should be an integer ranging from `1-4`. The default convar value set by oxmysql is `2`.
 

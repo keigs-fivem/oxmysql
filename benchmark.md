@@ -1,6 +1,7 @@
-Some hideous benchmarking commands and their results. Lua performance falls slightly behind due to overhead from cross-language communication.
+Benchmark results and functions for testing the time to resolve javascript sync exports. These times are not the same as query execution time.  
+Lua performance generally falls slightly behind due to overhead from cross-language communication.
 
-## Lua
+### Lua
 `Low: 0.2955ms | High: 16.7566ms | Avg: 0.36956378ms | Total: 3695.6378ms (10000 queries)`
 ```lua
 local lmprof = require 'lmprof'
@@ -42,16 +43,18 @@ end)
 const val = 10000
 RegisterCommand('jssync', async() => {
     const queryTimesLocal = [];
+	let result
     for(let i=0; i < val; i++) {
         const startTime = process.hrtime.bigint()
-        const result = await exports.oxmysql.scalarSync('SELECT * from users')
+        const r = await exports.oxmysql.scalarSync('SELECT * from users')
         queryTimesLocal.push(Number(process.hrtime.bigint() - startTime) / 1000000)
-        if (i === val) console.log(result)
+        if (i === 0) result = 1
     }
     const queryMsSum = queryTimesLocal.reduce((a, b) => a + b, 0)
     const queryMsHigh = queryTimesLocal.sort((a, b) => b - a)[0]
     const queryMsLow = queryTimesLocal.sort((a, b) => a - b)[0]
     const averageQueryTime = queryMsSum / queryTimesLocal.length
+	console.log(result)
     console.log('Low: '+ queryMsLow +'ms | High: '+queryMsHigh+'ms | Avg: '+averageQueryTime+'ms | Total: '+queryMsSum+'ms ('+queryTimesLocal.length+' queries)')
 })
 ```
